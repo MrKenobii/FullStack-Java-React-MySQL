@@ -23,7 +23,7 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    public User getOneUser(Long userId) {
+    public User getOneUserById(Long userId) {
         return userRepository.findById(userId).orElse(null);
     }
 
@@ -43,4 +43,5 @@ public class UserService {
     public void deleteOneUser(Long userId) {
         userRepository.deleteById(userId);
     }
+
 }
