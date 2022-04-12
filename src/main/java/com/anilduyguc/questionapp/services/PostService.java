@@ -5,10 +5,12 @@ import com.anilduyguc.questionapp.entities.User;
 import com.anilduyguc.questionapp.repos.PostRepository;
 import com.anilduyguc.questionapp.requests.PostCreateRequest;
 import com.anilduyguc.questionapp.requests.PostUpdateRequest;
+import com.anilduyguc.questionapp.responses.PostResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -19,9 +21,14 @@ public class PostService {
         this.userService = userService;
     }
 
-    public List<Post> getAllPosts(Optional<Long> userId) {
-        if(userId.isPresent()) return postRepository.findByUserId(userId.get());
-        return postRepository.findAll();
+    public List<PostResponse> getAllPosts(Optional<Long> userId) {
+        List<Post> postList;
+        if(userId.isPresent())
+             postList = postRepository.findByUserId(userId.get());
+        postList = postRepository.findAll();
+        return postList.stream().map(post ->
+            new PostResponse(post)
+        ).collect(Collectors.toList());
     }
 
     public Post getOnePostById(Long postId) {

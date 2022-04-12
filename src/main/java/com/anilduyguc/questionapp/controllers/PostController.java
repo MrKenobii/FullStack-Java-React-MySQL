@@ -3,6 +3,7 @@ package com.anilduyguc.questionapp.controllers;
 import com.anilduyguc.questionapp.entities.Post;
 import com.anilduyguc.questionapp.requests.PostCreateRequest;
 import com.anilduyguc.questionapp.requests.PostUpdateRequest;
+import com.anilduyguc.questionapp.responses.PostResponse;
 import com.anilduyguc.questionapp.services.PostService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class PostController {
         this.postService = postService;
     }
     @GetMapping
-    public List<Post> getAllPosts(@RequestParam Optional<Long> userId){
+    public List<PostResponse> getAllPosts(@RequestParam Optional<Long> userId){
         return postService.getAllPosts(userId);
     }
     @GetMapping("/{postId}")

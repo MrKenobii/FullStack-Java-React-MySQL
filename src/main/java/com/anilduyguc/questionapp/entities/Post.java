@@ -13,10 +13,9 @@ import javax.persistence.*;
 public class Post {
     @Id
     Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
             @OnDelete(action = OnDeleteAction.CASCADE)
-            @JsonIgnore
     User user;
     String title;
     @Lob
