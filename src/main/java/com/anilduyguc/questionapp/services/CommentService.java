@@ -6,11 +6,13 @@ import com.anilduyguc.questionapp.entities.User;
 import com.anilduyguc.questionapp.repos.CommentRepository;
 import com.anilduyguc.questionapp.requests.CommentCreateRequest;
 import com.anilduyguc.questionapp.requests.CommentUpdateRequest;
+import com.anilduyguc.questionapp.responses.CommentResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentService {
@@ -25,20 +27,22 @@ public class CommentService {
     }
 
 
-    public List<Comment> getAllCommentsWithParam(Optional<Long> userId, Optional<Long> postId) {
+    public List<CommentResponse> getAllCommentsWithParam(Optional<Long> userId, Optional<Long> postId) {
+        List<Comment> comments;
         if(userId.isPresent() && postId.isPresent()){
-            return commentRepository.findByUserIdAndPostId(userId.get(), postId.get());
+            comments = commentRepository.findByUserIdAndPostId(userId.get(), postId.get());
         }
         else if(userId.isPresent()){
-           return  commentRepository.findByUserId(userId.get());
+            comments =  commentRepository.findByUserId(userId.get());
         }
         else if(postId.isPresent()){
-              return commentRepository.findByPostId(postId.get());
+            comments = commentRepository.findByPostId(postId.get());
         }
         else{
-            commentRepository.findAll();
+            comments = commentRepository.findAll();
         }
-        return null;
+        return comments.stream().map(comment -> new CommentResponse(comment)).collect(Collectors.toList());
+
 
     }
 
