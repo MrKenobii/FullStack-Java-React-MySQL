@@ -48,7 +48,11 @@ public class PostService {
     public Post getOnePostById(Long postId) {
         return postRepository.findById(postId).orElse(null);
     }
-
+    public PostResponse getOnePostByIdWithLikes(Long postId) {
+        Post post = postRepository.findById(postId).orElse(null);
+        List<LikeResponse> likes = likeService.getAllLikes(Optional.ofNullable(null), Optional.of(postId));
+        return new PostResponse(post, likes);
+    }
 
     public Post createOnePost(PostCreateRequest newPostRequest) {
         User user = userService.getOneUserById(newPostRequest.getUserId());
@@ -59,7 +63,7 @@ public class PostService {
         toSave.setText(newPostRequest.getText());
         toSave.setTitle(newPostRequest.getTitle());
         toSave.setUser(user);
-        //toSave.setCreateDate(new Date());
+        toSave.setCreateDate(new Date());
         return postRepository.save(toSave);
     }
 

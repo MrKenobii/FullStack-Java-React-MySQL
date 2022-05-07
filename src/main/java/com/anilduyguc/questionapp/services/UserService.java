@@ -1,19 +1,32 @@
 package com.anilduyguc.questionapp.services;
 
+import com.anilduyguc.questionapp.entities.Comment;
+import com.anilduyguc.questionapp.entities.Like;
 import com.anilduyguc.questionapp.entities.User;
+import com.anilduyguc.questionapp.repos.CommentRepository;
+import com.anilduyguc.questionapp.repos.LikeRepository;
+import com.anilduyguc.questionapp.repos.PostRepository;
 import com.anilduyguc.questionapp.repos.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
     private UserRepository userRepository;
+    private LikeRepository likeRepository;
+    private CommentRepository commentRepository;
+    private PostRepository postRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, LikeRepository likeRepository, CommentRepository commentRepository, PostRepository postRepository) {
         this.userRepository = userRepository;
+        this.likeRepository = likeRepository;
+        this.commentRepository = commentRepository;
+        this.postRepository = postRepository;
     }
+
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -33,6 +46,7 @@ public class UserService {
             User foundUser = user.get();
             foundUser.setUsername(newUser.getUsername());
             foundUser.setPassword(newUser.getPassword());
+            foundUser.setAvatar(newUser.getAvatar());
             userRepository.save(foundUser);
             return foundUser;
         }else{
@@ -46,5 +60,17 @@ public class UserService {
 
     public User getOneUserByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public List<Object> getUserActivity(Long userId) {
+        List<Long> postIds = postRepository.findTopByUserId(userId);
+        if(postIds.isEmpty()) return null;
+        List<Object> comments=commentRepository.findUserCommentsByPostId(postIds);
+        List<Object> likes = likeRepository.findUserLikesByPostId(postIds);
+        List<Object> result = new ArrayList<>();
+        result.addAll(comments);
+        result.addAll(likes);
+        return result;
+
     }
 }
